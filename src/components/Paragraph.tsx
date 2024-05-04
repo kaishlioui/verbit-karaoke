@@ -19,7 +19,6 @@ const Paragraph = ({
   words,
   currentTime,
 }: IParagraphProps) => {
-    
   const ref = useRef<HTMLParagraphElement>(null);
   const isSelected = time <= currentTime && currentTime <= time + duration;
 
@@ -30,7 +29,7 @@ const Paragraph = ({
   }, [isSelected, ref.current]);
 
   return (
-    <p ref={ref} style={{ marginBottom: 64, opacity: isSelected ? 1 : 0.3 }}>
+    <p ref={ref} className="paragraph__item">
       {words.map((item, i) => (
         <Word
           key={`${i}${item.text}${item.time}`}

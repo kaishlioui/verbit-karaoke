@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getTranscript } from "../services/api/api";
 import Paragraph from "./Paragraph";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { IWord } from "../services/api/types";
 import { Loading } from "./Loading";
 
@@ -16,7 +16,15 @@ const Transcript = ({ id }: ITranscriptProps) => {
     queryFn: () => getTranscript(id),
   });
 
+  const paragraphTopRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    setCurrentTime(0);
+    if (paragraphTopRef.current) {
+      paragraphTopRef.current.scrollIntoView();
+    }
+  }, [data?.audio_url, paragraphTopRef.current]);
 
   const onTimeUpdate = () => {
     if (videoRef.current?.currentTime) {
@@ -35,13 +43,7 @@ const Transcript = ({ id }: ITranscriptProps) => {
     [data?.words]
   );
 
-  if (isLoading)
-    return (
-      <div className="loading">
-        <Loading />
-      </div>
-    );
-  if (!wordsCollection)
+  if (isLoading || !wordsCollection)
     return (
       <div className="loading">
         <Loading />
@@ -58,12 +60,14 @@ const Transcript = ({ id }: ITranscriptProps) => {
           height="100%"
           controls
           onTimeUpdate={onTimeUpdate}
+          className="video__media"
         >
           <source src={data?.audio_url} />
           Your browser does not support the video tag.
         </video>
       </div>
-      <div className="paragraph__container">
+      <div key={data?.audio_url} className="paragraph__container">
+        <div className="paragraph__container__top" ref={paragraphTopRef} />
         {data?.paragraphs.map((item) => {
           return (
             <Paragraph

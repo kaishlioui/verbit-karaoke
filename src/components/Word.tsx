@@ -6,13 +6,15 @@ interface IWordProps {
 }
 
 const Word = ({ text, time, duration, currentTime }: IWordProps) => {
-  const threshold = 0.2;
+  const delay = 0.15;
   const isSelected =
-    time - threshold <= currentTime &&
-    currentTime <= time + duration + threshold;
+    time - delay <= currentTime && currentTime <= time + duration + delay;
 
   return (
-    <span className="word" style={{ opacity: isSelected ? 1 : 0.5 }}>
+    <span
+      className="word"
+      style={{ color: isSelected ? "#212121" : "#d5d3cd" }}
+    >
       {text !== "." ? " " : ""}
       {text}
     </span>
